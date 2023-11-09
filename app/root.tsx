@@ -22,7 +22,10 @@ import favicon from '../public/favicon.svg';
 import resetStyles from './styles/reset.css';
 import appStyles from './styles/app.css';
 import {Layout} from '~/components/Layout';
-
+import tailwindCss from './styles/tailwind.css';
+import fontsOswald from './styles/fontOswald.css';
+import fontsLato from './styles/fontLato.css';
+import fontsAirborne from './styles/fontAirborne.css';
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
  */
@@ -46,17 +49,15 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export function links() {
   return [
+    {rel: 'stylesheet', href: fontsOswald},
+    {rel: 'stylesheet', href: fontsLato},
+    {rel: 'stylesheet', href: fontsAirborne},
+    {rel: 'stylesheet', href: tailwindCss},
     {rel: 'stylesheet', href: resetStyles},
     {rel: 'stylesheet', href: appStyles},
-    {
-      rel: 'preconnect',
-      href: 'https://cdn.shopify.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://shop.app',
-    },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'preconnect', href: 'https://cdn.shopify.com'},
+    {rel: 'preconnect', href: 'https://shop.app'},
+    {rel: 'icon', type: 'image/svg+xml', href: favicon}
   ];
 }
 

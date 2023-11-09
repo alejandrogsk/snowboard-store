@@ -8,9 +8,12 @@ import {
 } from '@shopify/hydrogen';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 import {useVariantUrl} from '~/utils';
+import ProductGridCard from '~/components/Products/ProductGridCard';
 
-export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+export const meta: MetaFunction<typeof loader> = ({
+  data,
+}) =>  {
+  return [{title: `Hydrogen | ${data?.collection?.title} Collection`}];
 };
 
 export async function loader({request, params, context}: LoaderFunctionArgs) {
@@ -20,7 +23,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     pageBy: 8,
   });
 
-  if (!handle) {
+  if (!handle || handle ===  'all') {
     return redirect('/collections');
   }
 
@@ -63,10 +66,10 @@ export default function Collection() {
 
 function ProductsGrid({products}: {products: ProductItemFragment[]}) {
   return (
-    <div className="products-grid">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 ">
       {products.map((product, index) => {
         return (
-          <ProductItem
+          <ProductGridCard
             key={product.id}
             product={product}
             loading={index < 8 ? 'eager' : undefined}
@@ -88,7 +91,7 @@ function ProductItem({
   const variantUrl = useVariantUrl(product.handle, variant.selectedOptions);
   return (
     <Link
-      className="product-item"
+      className="product-item lg:hover:scale-[1.05] duration-200 ease-in-out "
       key={product.id}
       prefetch="intent"
       to={variantUrl}

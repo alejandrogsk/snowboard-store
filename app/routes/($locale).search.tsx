@@ -96,6 +96,16 @@ const SEARCH_QUERY = `#graphql
         }
       }
     }
+    featuredImage{ 
+      url
+      altText
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
   }
   fragment SearchPage on Page {
      __typename

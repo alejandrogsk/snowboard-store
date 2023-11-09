@@ -29,9 +29,9 @@ export default function Page() {
   return (
     <div className="page">
       <header>
-        <h1>{page.title}</h1>
+        <h1 className='w-full md:w-[80%] lg:w-[60%] mx-auto'>{page.title}</h1>
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      <main dangerouslySetInnerHTML={{__html: page.body}} className='w-full md:w-[80%] lg:w-[60%] mx-auto'/>
     </div>
   );
 }

@@ -37,9 +37,9 @@ export default function Article() {
   }).format(new Date(article.publishedAt));
 
   return (
-    <div className="article">
-      <h1>
-        {title}
+    <div className="article w-full md:w-[80%] lg:w-[60%] mx-auto">
+      <h1 className='flex flex-col'>
+        {title} 
         <span>
           {publishedDate} &middot; {author?.name}
         </span>

@@ -1,5 +1,5 @@
-import {Suspense} from 'react';
-import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import { Suspense } from 'react';
+import { defer, redirect, type LoaderFunctionArgs } from '@shopify/remix-oxygen';
 import {
   Await,
   Link,
@@ -23,18 +23,20 @@ import {
 } from '@shopify/hydrogen';
 import type {
   CartLineInput,
+  Image as ImgType,
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
-import {getVariantUrl} from '~/utils';
-
-export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
+import { getVariantUrl } from '~/utils';
+import clsx from 'clsx';
+import FsLightbox from "fslightbox-react";
+import { useState } from 'react'
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: data?.product?.title ?? 'Products' }];
 };
 
-export async function loader({params, request, context}: LoaderFunctionArgs) {
-  const {handle} = params;
-  const {storefront} = context;
-
+export async function loader({ params, request, context }: LoaderFunctionArgs) {
+  const { handle } = params;
+  const { storefront } = context;
   const selectedOptions = getSelectedProductOptions(request).filter(
     (option) =>
       // Filter out Shopify predictive search query params
@@ -52,12 +54,12 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   }
 
   // await the query for the critical product data
-  const {product} = await storefront.query(PRODUCT_QUERY, {
-    variables: {handle, selectedOptions},
+  const { product } = await storefront.query(PRODUCT_QUERY, {
+    variables: { handle, selectedOptions },
   });
 
   if (!product?.id) {
-    throw new Response(null, {status: 404});
+    throw new Response(null, { status: 404 });
   }
 
   const firstVariant = product.variants.nodes[0];
@@ -74,7 +76,7 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     // if no selected variant was returned from the selected options,
     // we redirect to the first variant's url with it's selected options applied
     if (!product.selectedVariant) {
-      throw redirectToFirstVariant({product, request});
+      return redirectToFirstVariant({ product, request });
     }
   }
 
@@ -84,10 +86,10 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   // where variant options might show as available when they're not, but after
   // this deffered query resolves, the UI will update.
   const variants = storefront.query(VARIANTS_QUERY, {
-    variables: {handle},
+    variables: { handle },
   });
 
-  return defer({product, variants});
+  return defer({ product, variants });
 }
 
 function redirectToFirstVariant({
@@ -100,7 +102,7 @@ function redirectToFirstVariant({
   const url = new URL(request.url);
   const firstVariant = product.variants.nodes[0];
 
-  return redirect(
+  throw redirect(
     getVariantUrl({
       pathname: url.pathname,
       handle: product.handle,
@@ -114,11 +116,20 @@ function redirectToFirstVariant({
 }
 
 export default function Product() {
-  const {product, variants} = useLoaderData<typeof loader>();
-  const {selectedVariant} = product;
+  const { product, variants } = useLoaderData<typeof loader>();
+  const { selectedVariant } = product;
+
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
+    <div className={clsx({
+      'grid gap-4 grid-cols-1 ': true,
+      'lg:grid-cols-[1fr,1fr,1fr]': (product.images.edges.length > 1),
+      'lg:grid-cols-[1fr,1fr]': (product.images.edges.length <= 1),
+    })}>
+      {
+        product.images.edges.length > 1 
+        ? <MultipleImages product={product} selectedVariant={selectedVariant} />
+        : <ProductImage image={selectedVariant?.image} />
+      }
       <ProductMain
         selectedVariant={selectedVariant}
         product={product}
@@ -128,18 +139,99 @@ export default function Product() {
   );
 }
 
-function ProductImage({image}: {image: ProductVariantFragment['image']}) {
+function MultipleImages({product, selectedVariant}:{product:any, selectedVariant:any}) {
+
+  const filteredImages = product.images.edges.filter(({ node }:{node: ImgType}) => node.id !== selectedVariant?.image?.id)
+
+  const [lightboxController, setLightboxController] = useState({
+		toggler: false,
+		slide: 1
+	});
+
+	function openLightboxOnSlide(number:number) {
+		setLightboxController({
+			toggler: !lightboxController.toggler, 
+			slide: number
+		});
+	}
+  let sources = filteredImages.map(({ node }  :{ node: ImgType }) => node.url)//.unshift(selectedVariant?.image.url)
+  sources.unshift(selectedVariant?.image.url)
+  return (
+    <>
+    <FsLightbox
+				toggler={lightboxController.toggler}
+				sources={sources}
+				slide={lightboxController.slide}
+                type="image"
+			/>
+      <div className='hidden lg:block h-screen pb-8 w-full noScrolbar'>
+        {
+          /** All the images */
+          filteredImages.map(({ node }:{node: ImgType}, idx: number) => (
+            <Image
+              alt={node.altText ?? 'Product Image'}
+              data={node}
+              key={node.id}
+              className='rounder-xl max-h-[60vh] !w-auto mx-auto'
+              onClick={()=>openLightboxOnSlide(idx+2)}
+            />
+          ))
+        }
+      </div>
+      <ProductImageLarge image={selectedVariant?.image} imgAction={openLightboxOnSlide} />
+    </>
+  )
+}
+
+function ProductImage({ image }: { image: ProductVariantFragment['image'] }) {
+
+  const [lightboxController, setLightboxController] = useState({
+		toggler: false,
+		slide: 1
+	});
+
+	function openLightboxOnSlide(number:number) {
+		setLightboxController({
+			toggler: !lightboxController.toggler,
+			slide: number
+		});
+	}
+
+
   if (!image) {
     return <div className="product-image" />;
   }
   return (
     <div className="product-image">
+       <FsLightbox
+				toggler={lightboxController.toggler}
+				sources={[image.url]}
+				slide={lightboxController.slide}
+                type="image"
+			/>
       <Image
         alt={image.altText || 'Product Image'}
         aspectRatio="1/1"
         data={image}
         key={image.id}
         sizes="(min-width: 45em) 50vw, 100vw"
+        onClick={()=>openLightboxOnSlide(1)}
+      />
+    </div>
+  );
+}
+
+function ProductImageLarge({ image, imgAction }: { image: ProductVariantFragment['image'], imgAction: (number:number)=> void }) {
+  if (!image) {
+    return <div className="product-image" />;
+  }
+  return (
+    <div className="">
+      <Image
+        alt={image.altText || 'Product Image'}
+        data={image}
+        className='w-full h-auto lg:!h-screen lg:!w-auto !mx-auto'
+        onClick={()=>imgAction(1)}
       />
     </div>
   );
@@ -154,7 +246,7 @@ function ProductMain({
   selectedVariant: ProductFragment['selectedVariant'];
   variants: Promise<ProductVariantsQuery>;
 }) {
-  const {title, descriptionHtml} = product;
+  const { title, descriptionHtml } = product;
   return (
     <div className="product-main">
       <h1>{title}</h1>
@@ -188,7 +280,7 @@ function ProductMain({
         <strong>Description</strong>
       </p>
       <br />
-      <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+      <div dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
       <br />
     </div>
   );
@@ -235,7 +327,7 @@ function ProductForm({
         options={product.options}
         variants={variants}
       >
-        {({option}) => <ProductOptions key={option.name} option={option} />}
+        {({ option }) => <ProductOptions key={option.name} option={option} />}
       </VariantSelector>
       <br />
       <AddToCartButton
@@ -246,11 +338,11 @@ function ProductForm({
         lines={
           selectedVariant
             ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                },
-              ]
+              {
+                merchandiseId: selectedVariant.id,
+                quantity: 1,
+              },
+            ]
             : []
         }
       >
@@ -260,12 +352,12 @@ function ProductForm({
   );
 }
 
-function ProductOptions({option}: {option: VariantOption}) {
+function ProductOptions({ option }: { option: VariantOption }) {
   return (
     <div className="product-options" key={option.name}>
       <h5>{option.name}</h5>
       <div className="product-options-grid">
-        {option.values.map(({value, isAvailable, isActive, to}) => {
+        {option.values.map(({ value, isAvailable, isActive, to }) => {
           return (
             <Link
               className="product-options-item"
@@ -294,7 +386,7 @@ function AddToCartButton({
   children,
   disabled,
   lines,
-  onClick,
+  onClick
 }: {
   analytics?: unknown;
   children: React.ReactNode;
@@ -303,7 +395,7 @@ function AddToCartButton({
   onClick?: () => void;
 }) {
   return (
-    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
+    <CartForm route="/cart" inputs={{ lines }} action={CartForm.ACTIONS.LinesAdd}>
       {(fetcher: FetcherWithComponents<any>) => (
         <>
           <input
@@ -315,6 +407,7 @@ function AddToCartButton({
             type="submit"
             onClick={onClick}
             disabled={disabled ?? fetcher.state !== 'idle'}
+            className='bg-orange-500 hover:bg-black transition-all py-2 px-4 rounded text-white font-air rounded'
           >
             {children}
           </button>
@@ -369,6 +462,15 @@ const PRODUCT_FRAGMENT = `#graphql
     handle
     descriptionHtml
     description
+    images(first:10){
+      edges{
+        node{
+          id
+      		url
+      		altText
+        }
+      }
+    }
     options {
       name
       values

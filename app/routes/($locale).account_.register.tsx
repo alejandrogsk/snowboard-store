@@ -110,7 +110,7 @@ export default function Register() {
     <div className="login">
       <h1>Register.</h1>
       <Form method="POST">
-        <fieldset>
+        <fieldset className='p-0'>
           <label htmlFor="email">Email address</label>
           <input
             id="email"
@@ -122,6 +122,7 @@ export default function Register() {
             aria-label="Email address"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
+            className="rounded"
           />
           <label htmlFor="password">Password</label>
           <input
@@ -133,6 +134,7 @@ export default function Register() {
             aria-label="Password"
             minLength={8}
             required
+            className="rounded"
           />
           <label htmlFor="passwordConfirm">Re-enter password</label>
           <input
@@ -144,6 +146,7 @@ export default function Register() {
             aria-label="Re-enter password"
             minLength={8}
             required
+            className="rounded"
           />
         </fieldset>
         {error ? (
@@ -155,7 +158,7 @@ export default function Register() {
         ) : (
           <br />
         )}
-        <button type="submit">Register</button>
+        <button type="submit" className='w-full bg-orange-500 hover:bg-orange-600 font-air text-white rounded py-2'>Register</button>
       </Form>
       <br />
       <p>

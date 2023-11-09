@@ -12,6 +12,8 @@ img {
   border-radius: 4px;
 }
 
+
+
 /*
 * --------------------------------------------------
 * components/Aside
@@ -48,10 +50,9 @@ aside header .close {
   text-decoration: none;
   transition: all 200ms;
   width: 20px;
-}
-
-aside header .close:hover {
-  opacity: 1;
+  &:hover {
+    opacity: 1;
+  }
 }
 
 aside header h2 {
@@ -65,10 +66,9 @@ aside main {
 
 aside p {
   margin: 0 0 0.25rem;
-}
-
-aside p:last-child {
-  margin: 0;
+  &:last-child {
+    margin: 0;
+  }
 }
 
 aside li {
@@ -112,14 +112,16 @@ aside li {
   width: 100%;
 }
 
-.overlay:target {
-  opacity: 1;
-  pointer-events: auto;
-  visibility: visible;
-}
-/* reveal aside */
-.overlay:target aside {
-  transform: translateX(calc(var(--aside-width) * -1));
+.overlay {
+  &:target {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+  /* reveal aside */
+  &:target aside {
+    transform: translateX(calc(var(--aside-width) * -1));
+  }
 }
 
 /*
@@ -136,6 +138,7 @@ aside li {
   position: sticky;
   top: 0;
   z-index: 1;
+  font-family: 'Airborne-Pilot';
 }
 
 .header-menu-mobile-toggle {
@@ -148,6 +151,7 @@ aside li {
   display: flex;
   flex-direction: column;
   grid-gap: 1rem;
+  font-family: 'Airborne-Pilot';
 }
 
 .header-menu-desktop {
@@ -381,11 +385,7 @@ aside li {
 * --------------------------------------------------
 */
 .product {
-  display: grid;
-  @media (min-width: 45em) {
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 4rem;
-  }
+  
 }
 
 .product h1 {
@@ -425,6 +425,7 @@ aside li {
 
 .product-options-item {
   padding: 0.25rem 0.5rem;
+  border-radius: 10px;
 }
 
 /*
@@ -457,7 +458,9 @@ aside li {
   height: auto;
   width: 100%;
 }
-
+.article h2 {
+  margin-top: 2.5rem;
+}
 /*
 * --------------------------------------------------
 * routes/account
@@ -470,4 +473,25 @@ aside li {
 
 .account-logout {
   display: inline-block;
+}
+
+
+
+/*
+  routes/product.$handle
+*/
+.noScrolbar {
+  overflow-y: scroll;
+}
+
+.noScrolbar::-webkit-scrollbar {
+  width: 8px; /* Adjust the width as needed */
+}
+
+.noScrolbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.noScrolbar::-webkit-scrollbar-thumb {
+  background: transparent; /* Adjust the color as needed */
 }

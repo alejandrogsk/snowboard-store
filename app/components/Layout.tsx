@@ -66,7 +66,7 @@ function SearchAside() {
         <br />
         <PredictiveSearchForm>
           {({fetchResults, inputRef}) => (
-            <div>
+            <div className='flex gap-1 z-20'>
               <input
                 name="q"
                 onChange={fetchResults}
@@ -74,9 +74,10 @@ function SearchAside() {
                 placeholder="Search"
                 ref={inputRef}
                 type="search"
+                className='w-full m-0 rounded'
               />
               &nbsp;
-              <button type="submit">Search</button>
+              <button className='px-2 bg-orange-500 hover:bg-orange-600 rounded' type="submit">Search</button>
             </div>
           )}
         </PredictiveSearchForm>

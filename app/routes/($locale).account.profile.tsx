@@ -119,7 +119,7 @@ export default function AccountProfile() {
       <br />
       <Form method="PUT">
         <legend>Personal information</legend>
-        <fieldset>
+        <fieldset className='p-0'>
           <label htmlFor="firstName">First name</label>
           <input
             id="firstName"
@@ -130,6 +130,7 @@ export default function AccountProfile() {
             aria-label="First name"
             defaultValue={customer.firstName ?? ''}
             minLength={2}
+            className='rounded'
           />
           <label htmlFor="lastName">Last name</label>
           <input
@@ -141,6 +142,7 @@ export default function AccountProfile() {
             aria-label="Last name"
             defaultValue={customer.lastName ?? ''}
             minLength={2}
+            className='rounded'
           />
           <label htmlFor="phone">Mobile</label>
           <input
@@ -151,6 +153,7 @@ export default function AccountProfile() {
             placeholder="Mobile"
             aria-label="Mobile"
             defaultValue={customer.phone ?? ''}
+            className='rounded'
           />
           <label htmlFor="email">Email address</label>
           <input
@@ -162,6 +165,7 @@ export default function AccountProfile() {
             placeholder="Email address"
             aria-label="Email address"
             defaultValue={customer.email ?? ''}
+            className='rounded'
           />
           <div className="account-profile-marketing">
             <input
@@ -171,6 +175,7 @@ export default function AccountProfile() {
               placeholder="Accept marketing"
               aria-label="Accept marketing"
               defaultChecked={customer.acceptsMarketing}
+              className='rounded'
             />
             <label htmlFor="acceptsMarketing">
               &nbsp; Subscribed to marketing communications
@@ -179,7 +184,7 @@ export default function AccountProfile() {
         </fieldset>
         <br />
         <legend>Change password (optional)</legend>
-        <fieldset>
+        <fieldset className='p-0'>
           <label htmlFor="currentPassword">Current password</label>
           <input
             id="currentPassword"
@@ -189,6 +194,7 @@ export default function AccountProfile() {
             placeholder="Current password"
             aria-label="Current password"
             minLength={8}
+            className='rounded'
           />
 
           <label htmlFor="newPassword">New password</label>
@@ -199,6 +205,7 @@ export default function AccountProfile() {
             placeholder="New password"
             aria-label="New password"
             minLength={8}
+            className='rounded'
           />
 
           <label htmlFor="newPasswordConfirm">New password (confirm)</label>
@@ -209,10 +216,12 @@ export default function AccountProfile() {
             placeholder="New password (confirm)"
             aria-label="New password confirm"
             minLength={8}
+            className='rounded'
           />
           <small>Passwords must be at least 8 characters.</small>
         </fieldset>
-        {action?.error ? (
+        {action?.error ? 
+        (
           <p>
             <mark>
               <small>{action.error}</small>
@@ -221,7 +230,7 @@ export default function AccountProfile() {
         ) : (
           <br />
         )}
-        <button type="submit" disabled={state !== 'idle'}>
+        <button type="submit" className='w-full bg-orange-500 hover:bg-orange-600 font-air text-white rounded py-2' disabled={state !== 'idle'}>
           {state !== 'idle' ? 'Updating' : 'Update'}
         </button>
       </Form>

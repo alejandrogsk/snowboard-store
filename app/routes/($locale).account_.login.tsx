@@ -75,7 +75,7 @@ export default function Login() {
     <div className="login">
       <h1>Sign in.</h1>
       <Form method="POST">
-        <fieldset>
+        <fieldset className='p-0'>
           <label htmlFor="email">Email address</label>
           <input
             id="email"
@@ -87,6 +87,7 @@ export default function Login() {
             aria-label="Email address"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
+            className="rounded"
           />
           <label htmlFor="password">Password</label>
           <input
@@ -98,6 +99,7 @@ export default function Login() {
             aria-label="Password"
             minLength={8}
             required
+            className="rounded"
           />
         </fieldset>
         {error ? (
@@ -109,7 +111,7 @@ export default function Login() {
         ) : (
           <br />
         )}
-        <button type="submit">Sign in</button>
+        <button type="submit" className='w-full bg-orange-500 hover:bg-orange-600 font-air text-white rounded py-2'>Sign in</button>
       </Form>
       <br />
       <div>
