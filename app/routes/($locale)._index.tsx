@@ -41,7 +41,7 @@ export default function Homepage() {
 }
 function HeroSection() {
   return (
-    <div className='h-screen lg:h-[95vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden'>
+    <div className='min-h-screen lg:min-h-[95vh] grid grid-cols-1 lg:grid-cols-2'>
       <div className='flex flex-col justify-center'>
         <h1 className='font-oswald text-6xl md:text-7xl lg:text-9xl uppercase mt-0 '>Winter is here</h1>
         <div>
