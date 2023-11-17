@@ -30,6 +30,10 @@ import { getVariantUrl } from '~/utils';
 import clsx from 'clsx';
 import FsLightbox from "fslightbox-react";
 import { useState } from 'react'
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+
+
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [{ title: data?.product?.title ?? 'Products' }];
 };
@@ -249,7 +253,7 @@ function ProductMain({
   const { title, descriptionHtml } = product;
   return (
     <div className="product-main">
-      <h1>{title}</h1>
+      <h1 className='mt-0'>{title}</h1>
       <ProductPrice selectedVariant={selectedVariant} />
       <br />
       <Suspense
@@ -275,12 +279,16 @@ function ProductMain({
         </Await>
       </Suspense>
       <br />
-      <br />
-      <p>
-        <strong>Description</strong>
-      </p>
-      <br />
-      <div dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+
+      <Accordion.Root type="single" collapsible className="w-full">
+      <Accordion.Item value="item-1">
+        <Accordion.Trigger  className='AccordionTrigger'><span><strong>Description</strong></span><ChevronDownIcon className="AccordionChevron" aria-hidden /></Accordion.Trigger>
+        <Accordion.Content className="AccordionContent">
+        <div dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+        </Accordion.Content>
+      </Accordion.Item>
+    </Accordion.Root>
+  
       <br />
     </div>
   );
